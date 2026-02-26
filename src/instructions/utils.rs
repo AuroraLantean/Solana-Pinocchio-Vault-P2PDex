@@ -277,7 +277,12 @@ pub enum Ee {
   SimpleAcctOwner,
   #[error("SimpleAcctWriteAuthority")]
   SimpleAcctWriteAuthority,
+  #[error("TokenAcctsLength")]
+  //Flashloan
+  TokenAcctsLength,
   #[error("NotMapped")]
+  LoanDataAcct,
+  #[error("LoanDataAcct")]
   NotMapped,
   //ProgramResult: AccountBorrowFailed
 }
@@ -418,6 +423,8 @@ impl TryFrom<u32> for Ee {
       119 => Ok(Ee::SimpleAcctDataLen),
       120 => Ok(Ee::SimpleAcctOwner),
       121 => Ok(Ee::SimpleAcctWriteAuthority),
+      122 => Ok(Ee::TokenAcctsLength),
+      123 => Ok(Ee::LoanDataAcct),
       _ => Err(Ee::NotMapped.into()),
     }
   }
@@ -558,6 +565,9 @@ impl ToStr for Ee {
       Ee::SimpleAcctDataLen => "SimpleAcctDataLen",
       Ee::SimpleAcctOwner => "SimpleAcctOwner",
       Ee::SimpleAcctWriteAuthority => "SimpleAcctWriteAuthority",
+      //Flashloan
+      Ee::TokenAcctsLength => "TokenAcctsLength",
+      Ee::LoanDataAcct => "LoanDataAcct",
       Ee::NotMapped => "NotMapped",
     }
   }

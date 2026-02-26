@@ -63,6 +63,7 @@ fn process_instruction(
     Config2Update::DISCRIMINATOR => Config2Update::try_from((data, accounts))?.process(),
     OraclesRead::DISCRIMINATOR => OraclesRead::try_from((data, accounts))?.process(),
     FlashloanBorrow::DISCRIMINATOR => FlashloanBorrow::try_from((data, accounts))?.process(),
+    //FlashloanRepay::DISCRIMINATOR => FlashloanRepay::try_from((data, accounts))?.process(),
     _ => Err(Ee::MethodDiscriminator.into()),
   } //file names start with a lower case + Camel cases, but struct names start with Upper case + Camel cases!
 }
