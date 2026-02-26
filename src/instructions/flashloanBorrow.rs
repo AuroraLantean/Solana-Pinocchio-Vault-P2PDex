@@ -1,6 +1,6 @@
 use crate::{
-  check_data_len, check_pda, executable, instructions::check_signer, parse_u64, to32bytes,
-  writable, Ee,
+  check_data_len, check_pda, executable, instructions::check_signer, parse_u16, parse_u64,
+  to32bytes, writable, Ee,
 };
 use core::convert::TryFrom;
 use pinocchio::{
@@ -21,7 +21,9 @@ pub struct FlashloanBorrow<'a> {
   pub token_accounts: &'a [AccountView],
   //pub lender_ata: &'a AccountView,
   //pub user_ata: &'a AccountView,
-  pub amount: u64,
+  pub bump: [u8; 1],
+  pub fee: u16,
+  pub amounts: &'a [u64],
 } /*Flashloan{
   lender_pda, lender_ata,
   user_ata, mint, user(signer),
@@ -42,8 +44,7 @@ impl<'a> TryFrom<(&'a [u8], &'a [AccountView])> for FlashloanBorrow<'a> {
     log!("FlashloanBorrow try_from");
     let (data, accounts) = value;
     log!("accounts len: {}, data len: {}", accounts.len(), data.len());
-    let data_size1 = 9;
-    check_data_len(data, data_size1)?;
+    //let instruction_data = LoanInstructionData::try_from(data)?;
 
     let [signer, lender_pda, loan_data, mint, instruction_sysvar, config_pda, token_program, system_program, token_accounts @ ..] =
       accounts
@@ -64,12 +65,35 @@ impl<'a> TryFrom<(&'a [u8], &'a [AccountView])> for FlashloanBorrow<'a> {
     if (token_accounts.len() % 2).ne(&0) || token_accounts.len().eq(&0) {
       return Err(Ee::TokenAcctsLength.into());
     }
-
     if loan_data.try_borrow()?.len().ne(&0) {
       return Err(Ee::LoanDataAcct.into());
     }
-    let amount = parse_u64(&data[1..9])?;
-    log!("amount: {}", amount);
+
+    //-------== parse variadic data
+    let (bump, data) = data.split_first().ok_or_else(|| Ee::ByteSizeForU8)?;
+
+    let (fee, data) = data
+      .split_at_checked(size_of::<u16>())
+      .ok_or_else(|| Ee::ByteSizeForU16)?;
+    let fee = u16::from_le_bytes(
+      fee
+        .try_into()
+        .map_err(|_| ProgramError::InvalidInstructionData)?,
+    );
+    log!("fee: {}", fee);
+    if data.len() % size_of::<u64>() != 0 {
+      return Err(Ee::ByteSizeForU64.into());
+    }
+    //Deriving the protocol PDA with the fee creates isolated liquidity pools for each fee tier, eliminating the need to store fee data in accounts. This design is both safe and optimal since each PDA with a specific fee owns only the liquidity associated with that fee rate. If someone passes an invalid fee, the corresponding token account for that fee bracket will be empty, automatically causing the transfer to fail with insufficient funds.
+
+    // Get the amount slice
+    let amounts: &[u64] = unsafe {
+      core::slice::from_raw_parts(data.as_ptr() as *const u64, data.len() / size_of::<u64>())
+    };
+    log!("amounts: {}", amounts);
+    if amounts.len() != token_accounts.len() / 2 {
+      return Err(Ee::AmountsLenVsTokenAcctLen.into());
+    }
     Ok(Self {
       signer,
       lender_pda,
@@ -81,7 +105,9 @@ impl<'a> TryFrom<(&'a [u8], &'a [AccountView])> for FlashloanBorrow<'a> {
       system_program,
       token_accounts,
       //lender_ata, user_ata,
-      amount,
+      bump: [*bump],
+      fee,
+      amounts,
     })
   }
 }

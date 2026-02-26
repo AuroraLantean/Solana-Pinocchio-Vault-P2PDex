@@ -2,7 +2,6 @@
 import { expect, test } from "bun:test";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import type { Keypair, PublicKey } from "@solana/web3.js";
-import type { Clock } from "litesvm";
 import {
 	Status,
 	solanaKitDecodeConfigDev,
@@ -56,14 +55,12 @@ let writeAuthority: PublicKey;
 let tokenMint: PublicKey;
 let tokenProg: PublicKey;
 const oracleVendor = 0;
-const _numU32 = 0;
 let numU64 = 0n;
 let fee: bigint;
 let isAuthorized = false;
 let status: Status;
 let str: string;
 let pricefeed: PriceFeed;
-let _clock: Clock;
 
 test("Set Mints", () => {
 	ll("\n------== Set Mints");

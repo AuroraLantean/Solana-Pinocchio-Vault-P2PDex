@@ -277,12 +277,15 @@ pub enum Ee {
   SimpleAcctOwner,
   #[error("SimpleAcctWriteAuthority")]
   SimpleAcctWriteAuthority,
-  #[error("TokenAcctsLength")]
   //Flashloan
+  #[error("TokenAcctsLength")]
   TokenAcctsLength,
-  #[error("NotMapped")]
-  LoanDataAcct,
   #[error("LoanDataAcct")]
+  LoanDataAcct,
+  #[error("AmountsLenVsTokenAcctLen")]
+  AmountsLenVsTokenAcctLen,
+  //Final variant
+  #[error("NotMapped")]
   NotMapped,
   //ProgramResult: AccountBorrowFailed
 }
@@ -425,6 +428,7 @@ impl TryFrom<u32> for Ee {
       121 => Ok(Ee::SimpleAcctWriteAuthority),
       122 => Ok(Ee::TokenAcctsLength),
       123 => Ok(Ee::LoanDataAcct),
+      124 => Ok(Ee::AmountsLenVsTokenAcctLen),
       _ => Err(Ee::NotMapped.into()),
     }
   }
@@ -568,6 +572,8 @@ impl ToStr for Ee {
       //Flashloan
       Ee::TokenAcctsLength => "TokenAcctsLength",
       Ee::LoanDataAcct => "LoanDataAcct",
+      Ee::AmountsLenVsTokenAcctLen => "AmountsLenVsTokenAcctLen",
+      //Final Variant
       Ee::NotMapped => "NotMapped",
     }
   }
@@ -993,6 +999,13 @@ pub fn parse_u32(data: &[u8]) -> Result<u32, ProgramError> {
   let bytes: [u8; 4] = data.try_into().or_else(|_e| Err(Ee::ByteSizeForU32))?;
 
   let amt = u32::from_le_bytes(bytes);
+  // let amount = u64::from_le_bytes([data[0], data[1], data[2], data[3]]);
+  Ok(amt)
+}
+pub fn parse_u16(data: &[u8]) -> Result<u16, ProgramError> {
+  let bytes: [u8; 2] = data.try_into().or_else(|_e| Err(Ee::ByteSizeForU16))?;
+
+  let amt = u16::from_le_bytes(bytes);
   // let amount = u64::from_le_bytes([data[0], data[1], data[2], data[3]]);
   Ok(amt)
 }
