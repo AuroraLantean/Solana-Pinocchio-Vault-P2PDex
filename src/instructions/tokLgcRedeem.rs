@@ -69,10 +69,11 @@ impl<'a> TokLgcRedeem<'a> {
     }
     log!("ToATA is found/verified");
 
+    //let bump_array = [vault_bump];
     let signer_seeds = [
       Seed::from(VAULT_SEED),
       Seed::from(prog_owner.as_ref()),
-      Seed::from(core::slice::from_ref(&vault_bump)),
+      Seed::from(core::slice::from_ref(&vault_bump)), //&bump_array
     ];
     log!("TokLgcRedeem 7c");
     let seed_signer = Signer::from(&signer_seeds);

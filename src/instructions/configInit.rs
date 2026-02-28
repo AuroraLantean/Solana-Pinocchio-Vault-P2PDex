@@ -63,6 +63,7 @@ impl<'a> InitConfig<'a> {
     }
 
     log!("InitConfig 6");
+    //let bump_array = [bump];
     let seeds = [
       Seed::from(Config::SEED),
       Seed::from(prog_owner.as_ref()),

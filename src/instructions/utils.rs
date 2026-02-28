@@ -863,6 +863,7 @@ pub fn check_rent_sysvar(account: &AccountView) -> ProgramResult {
 
 pub fn close_pda(pda: &AccountView, dest: &AccountView) -> ProgramResult {
   log!("Close pda 1");
+  //set the first byte to 255
   {
     let mut data = pda.try_borrow_mut()?;
     data[0] = 0xff;
@@ -874,7 +875,10 @@ pub fn close_pda(pda: &AccountView, dest: &AccountView) -> ProgramResult {
     .ok_or_else(|| ProgramError::ArithmeticOverflow)?;
   dest.set_lamports(sum_lam);
   pda.set_lamports(0);
+  //https://learn.blueshift.gg/en/courses/pinocchio-for-dummies/pinocchio-accounts
+  //*dest.try_borrow_mut_lamports()? += *config_pda.try_borrow_lamports()?;
 
+  //resize the account to only the 1st byte
   pda.resize(1)?;
   pda.close()?;
   Ok(())

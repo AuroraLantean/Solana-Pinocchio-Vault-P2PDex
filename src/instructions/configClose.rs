@@ -2,7 +2,7 @@ use core::convert::TryFrom;
 use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 use pinocchio_log::log;
 
-use crate::{check_data_len, check_pda, instructions::check_signer, writable, Config};
+use crate::{check_data_len, check_pda, close_pda, instructions::check_signer, writable, Config};
 
 /// Close PDA
 pub struct CloseConfigPda<'a> {
@@ -20,24 +20,7 @@ impl<'a> CloseConfigPda<'a> {
       dest,
     } = self;
     log!("CloseConfigPda process()");
-    //set the first byte to 255
-    {
-      let mut data = config_pda.try_borrow_mut()?;
-      data[0] = 0xff;
-    }
-    log!("CloseConfigPda 1");
-    let sum_lam = dest
-      .lamports()
-      .checked_add(config_pda.lamports())
-      .ok_or_else(|| ProgramError::ArithmeticOverflow)?;
-    dest.set_lamports(sum_lam);
-    config_pda.set_lamports(0);
-    //https://learn.blueshift.gg/en/courses/pinocchio-for-dummies/pinocchio-accounts
-    //*dest.try_borrow_mut_lamports()? += *config_pda.try_borrow_lamports()?;
-
-    log!("CloseConfigPda 2"); //resize the account to only the 1st byte
-    config_pda.resize(1)?;
-    config_pda.close()?;
+    close_pda(config_pda, dest)?;
     Ok(())
   }
 }

@@ -71,8 +71,8 @@ crate-type = ["lib", "cdylib"]
 ### Make Program ID
 
 ```bash
-solana-keygen new -o target/deploy/pinocchio_vault-keypair.json
-solana address -k target/deploy/pinocchio_vault-keypair.json
+solana-keygen new -o target/deploy/pinocchio_vault_escrow-keypair.json
+solana address -k target/deploy/pinocchio_vault_escrow-keypair.json
 ```
 
 Paste it into
@@ -93,7 +93,7 @@ cargo install shank-cli
 shank idl -o idl
 ```
 
-The idl folder in our project now contains pinocchio_vault.json which is our program's IDL.
+The idl folder in our project now contains pinocchio_vault_escrow.json which is our program's IDL.
 
 ### Make a client via @solana/kit and Codama
 
@@ -102,6 +102,13 @@ Codama takes the Shank IDL and emits a TypeScript client. The generated code inc
 ```bash
   pnpm install
   pnpm dlx codama init
+```
+✔ Where is your IDL located? (Supports Codama and Anchor IDLs). … idl/pinocchio_flashloan.json
+✔ Which script preset would you like to use? › Generate JavaScript client, Generate Rust client
+✔ [js] Where is the JavaScript client package located? … clients/js
+✔ [rust] Where is the Rust client crate located? … clients/rust
+
+```bash
   pnpm dlx codama run js
 ```
 
@@ -140,7 +147,7 @@ Build, deploy the Program locally, and run tests in terminal 2:
 
 ```bash
 cargo build-sbf
-solana program deploy --program-id target/deploy/pinocchio_vault-keypair.json target/deploy/pinocchio_vault.so --url localhost
+solana program deploy --program-id target/deploy/pinocchio_vault_escrow-keypair.json target/deploy/pinocchio_vault_escrow.so --url localhost
 bun test ./tests/test1.ts
 ```
 

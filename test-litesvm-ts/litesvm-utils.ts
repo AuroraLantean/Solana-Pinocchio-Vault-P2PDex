@@ -1109,50 +1109,7 @@ export const initSimpleAcct = (
 	});
 	sendTxns(svm, blockhash, [ix], [signer], "", futureOptionAddr);
 };
-export const flashloan = (
-	userSigner: Keypair,
-	lenderPda: PublicKey,
-	loanRecords: PublicKey,
-	//lenderAta: PublicKey,
-	//userAta: PublicKey,
-	mint: PublicKey,
-	tokenProgram: PublicKey,
-	configPda: PublicKey,
-	tokenAccounts: PublicKey[],
-	amount: bigint,
-) => {
-	const disc = 22;
-	const argData = [...numToBytes(amount)];
-	if (tokenAccounts.length % 2 !== 0)
-		throw new Error("tokenAccounts length is an odd number");
 
-	const blockhash = svm.latestBlockhash();
-	const ix = new TransactionInstruction({
-		keys: [
-			{ pubkey: userSigner.publicKey, isSigner: true, isWritable: true },
-			{ pubkey: lenderPda, isSigner: false, isWritable: false },
-			{ pubkey: loanRecords, isSigner: false, isWritable: true },
-			{ pubkey: mint, isSigner: false, isWritable: false },
-			{
-				pubkey: SYSVAR_INSTRUCTIONS_PUBKEY,
-				isSigner: false,
-				isWritable: false,
-			},
-			{
-				pubkey: tokenProgram,
-				isSigner: false,
-				isWritable: false,
-			},
-			{ pubkey: SYSTEM_PROGRAM, isSigner: false, isWritable: false },
-			{ pubkey: configPda, isSigner: false, isWritable: true },
-			{ pubkey: tokenAccounts[0]!, isSigner: false, isWritable: true },
-			{ pubkey: tokenAccounts[1]!, isSigner: false, isWritable: true },
-		],
-		programId: futureOptionAddr,
-		data: Buffer.from([disc, ...argData]),
-	});
-	sendTxns(svm, blockhash, [ix], [userSigner], "", futureOptionAddr);
-};
 //---------------== Run Test
 export const sendTxns = (
 	svm: LiteSVM,

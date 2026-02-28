@@ -66,6 +66,7 @@ impl<'a> TokLgcWithdraw<'a> {
     }
     log!("ToATA is found/verified");
 
+    //let bump_array = [vault_bump];
     let signer_seeds = [
       Seed::from(VAULT_SEED),
       Seed::from(user.address().as_ref()),

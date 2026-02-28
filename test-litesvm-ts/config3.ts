@@ -2,7 +2,6 @@
 import { expect, test } from "bun:test";
 import { getBase58Decoder } from "@solana/kit";
 import type { Keypair, PublicKey } from "@solana/web3.js";
-import type { Clock } from "litesvm";
 import {
 	Status,
 	solanaKitDecodeConfig2Dev,
@@ -66,13 +65,10 @@ let str: string;
 let funcSelector: number;
 let numU32: number;
 let numU64: bigint;
-let _time: number;
 let bytes4bools: number[];
 let bytes4u8s: number[];
 let bytes4u32s: number[];
 let bytes4u64s: number[];
-
-let _clock: Clock;
 
 test("Set Mints", () => {
 	ll("\n------== Set Mints");
