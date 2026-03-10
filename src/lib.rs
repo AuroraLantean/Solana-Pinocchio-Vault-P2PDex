@@ -62,6 +62,7 @@ fn process_instruction(
     ConfigResize::DISCRIMINATOR => ConfigResize::try_from((data, accounts))?.process(),
     Config2Update::DISCRIMINATOR => Config2Update::try_from((data, accounts))?.process(),
     OraclesRead::DISCRIMINATOR => OraclesRead::try_from((data, accounts))?.process(),
+    //UserInit::DISCRIMINATOR => UserInit::try_from((data, accounts))?.process(),
     _ => Err(Ee::MethodDiscriminator.into()),
   } //file names start with a lower case + Camel cases, but struct names start with Upper case + Camel cases!
 }

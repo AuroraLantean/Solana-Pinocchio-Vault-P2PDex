@@ -224,6 +224,7 @@ test("Pay Legacy Tokens", () => {
 	signer = signerKp.publicKey;
 	fromAta = getAta(mint, signer);
 	toAta = getAta(mint, vaultO);
+	//TODO: this vaultO should be changed to an account from string seed
 
 	lgcPay(signerKp, fromAta, toAta, vaultO, mint, configPDA, decimals, amt);
 	ataBalCk(toAta, amt, "vaultO");

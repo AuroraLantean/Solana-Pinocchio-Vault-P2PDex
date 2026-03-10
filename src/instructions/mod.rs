@@ -44,6 +44,8 @@ pub mod tokLgcPay;
 pub mod tokLgcRedeem;
 #[allow(non_snake_case)]
 pub mod tokLgcWithdraw;
+#[allow(non_snake_case)]
+pub mod userInit;
 pub mod utils;
 
 //file names start with a lower case + Camel cases, but struct names start with Upper case + Camel cases!
@@ -69,6 +71,7 @@ pub use tokLgcMintToken::*;
 pub use tokLgcPay::*;
 pub use tokLgcRedeem::*;
 pub use tokLgcWithdraw::*;
+pub use userInit::*;
 pub use utils::*;
 
 use shank::ShankInstruction;

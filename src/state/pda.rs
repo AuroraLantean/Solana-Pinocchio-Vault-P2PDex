@@ -96,19 +96,26 @@ impl Config {
       }
   }*/
   //----------== Load from AccountView
-  /* check() is replaced by check_pda
-  pub fn check(&self, pda: &AccountView) -> ProgramResult {
-    if pda.data_len() != Self::expected_len(&self) as usize {
-      return Ee::ConfigDataLengh.e();
+  pub fn check(pda: &AccountView) -> ProgramResult {
+    //TODO: check length for expected length
+    /*if pda.data_len() != Self::expected_len(&self) as usize {}
+    //Self::LEN {} */
+    unsafe {
+      if pda.owner().ne(&PROG_ADDR) {
+        return Ee::VaultIsForeign.e();
+      }
     }
-    //if pda.data_len() != Self::LEN {}
     // CHECK alignment for the most restrictive field (u64 in this case)... Alignment requirement checking can be removed ONLY IF you know all numbers are using u8 arrays
     /*if (pda.borrow_mut_data_unchecked().as_ptr() as usize) % core::mem::align_of::<Self>() != 0 { return Err();  }*/
     Ok(())
-  }*/
+  }
   //For Config PDA
   pub fn from_account_view(pda: &AccountView) -> Result<&mut Self, ProgramError> {
-    unsafe { Ok(&mut *(pda.borrow_unchecked_mut().as_ptr() as *mut Self)) }
+    Self::check(pda)?;
+    if (pda.try_borrow()?.as_ptr() as usize) % core::mem::align_of::<Self>() != 0 {
+      return Err(Ee::ConfigDataLengh.into());
+    }
+    unsafe { Ok(&mut *(pda.try_borrow_mut()?.as_ptr() as *mut Self)) }
     /*Ok(Ref::map(account_info.try_borrow_data()?, |data| unsafe {
         Self::from_bytes_unchecked(data)
     })) */
@@ -313,12 +320,4 @@ impl Escrow {
     unsafe { Ok(Self::from_bytes_unchecked(pda.borrow_unchecked_mut())) }
     //unsafe { Ok(&mut *(pda.borrow_mut_data_unchecked().as_ptr() as *mut Self)) }
   }
-}
-
-//temporarily store loan record
-#[derive(Clone, Debug)]
-#[repr(C, packed)]
-pub struct LoanRecord {
-  pub lender_token_acct: [u8; 32],
-  pub balance_with_fee: u64,
 }

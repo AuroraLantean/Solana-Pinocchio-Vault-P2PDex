@@ -276,27 +276,6 @@ pub enum Ee {
   SimpleAcctOwner,
   #[error("SimpleAcctWriteAuthority")]
   SimpleAcctWriteAuthority,
-  //Flashloan
-  #[error("TokenAcctsLength")]
-  TokenAcctsLength,
-  #[error("LoanRecordAcct")]
-  LoanRecordAcct,
-  #[error("AmountsLenVsTokenAcctLen")]
-  AmountsLenVsTokenAcctLen,
-  #[error("BorrowAmountTooBig")]
-  BorrowAmountTooBig,
-  #[error("BorrowedAmountIsZero")]
-  BorrowedAmountIsZero,
-  #[error("LenderPdaBalanceIsZero")]
-  LenderPdaBalanceIsZero,
-  #[error("RepayProgId")]
-  RepayProgId,
-  #[error("RepayDiscriminator")]
-  RepayDiscriminator,
-  #[error("RepayIxLenderPda")]
-  RepayIxLenderPda,
-  #[error("RepayTokenAccountLen")]
-  RepayTokenAccountLen,
   //Final variant
   #[error("NotMapped")]
   NotMapped,
@@ -439,16 +418,6 @@ impl TryFrom<u32> for Ee {
       119 => Ok(Ee::SimpleAcctDataLen),
       120 => Ok(Ee::SimpleAcctOwner),
       121 => Ok(Ee::SimpleAcctWriteAuthority),
-      122 => Ok(Ee::TokenAcctsLength),
-      123 => Ok(Ee::LoanRecordAcct),
-      124 => Ok(Ee::AmountsLenVsTokenAcctLen),
-      125 => Ok(Ee::BorrowAmountTooBig),
-      126 => Ok(Ee::BorrowedAmountIsZero),
-      127 => Ok(Ee::LenderPdaBalanceIsZero),
-      128 => Ok(Ee::RepayProgId),
-      129 => Ok(Ee::RepayDiscriminator),
-      130 => Ok(Ee::RepayIxLenderPda),
-      131 => Ok(Ee::RepayTokenAccountLen),
       _ => Err(Ee::NotMapped.into()),
     }
   }
@@ -589,17 +558,6 @@ impl ToStr for Ee {
       Ee::SimpleAcctDataLen => "SimpleAcctDataLen",
       Ee::SimpleAcctOwner => "SimpleAcctOwner",
       Ee::SimpleAcctWriteAuthority => "SimpleAcctWriteAuthority",
-      //Flashloan
-      Ee::TokenAcctsLength => "TokenAcctsLength",
-      Ee::LoanRecordAcct => "LoanRecordAcct",
-      Ee::AmountsLenVsTokenAcctLen => "AmountsLenVsTokenAcctLen",
-      Ee::BorrowAmountTooBig => "BorrowAmountTooBig",
-      Ee::BorrowedAmountIsZero => "BorrowedAmountIsZero",
-      Ee::LenderPdaBalanceIsZero => "LenderPdaBalanceIsZero",
-      Ee::RepayProgId => "RepayProgId",
-      Ee::RepayDiscriminator => "RepayDiscriminator",
-      Ee::RepayIxLenderPda => "RepayIxLenderPda",
-      Ee::RepayTokenAccountLen => "RepayTokenAccountLen",
       //Final Variant
       Ee::NotMapped => "NotMapped",
     }
